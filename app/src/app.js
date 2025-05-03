@@ -3,34 +3,55 @@ const SPRITE_SIZE = 256; // size of each frame (px)
 const GRID_COLS = 4;
 const GRID_ROWS = 4;
 const FRAME_COUNT = GRID_COLS * GRID_ROWS;
-const FRAME_RATE = 5; // frames per second
+const FRAME_RATE = 8; // frames per second
 
-function startSpriteAnimation() {
+let animationInterval = null;
+let spriteFrame = 0;
+let spriteImg = null;
+let currentSprite = null; // 'speaking' or 'listening'
+
+const SPRITE_PATHS = {
+    speaking: 'static/assets/animation_grid.png',
+    listening: 'static/assets/animation_grid_listening.png'
+};
+
+function drawSpriteFrame(ctx, img, frame) {
+    const col = frame % GRID_COLS;
+    const row = Math.floor(frame / GRID_COLS);
+    ctx.clearRect(0, 0, SPRITE_SIZE, SPRITE_SIZE);
+    ctx.drawImage(
+        img,
+        col * SPRITE_SIZE, row * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE,
+        0, 0, SPRITE_SIZE, SPRITE_SIZE
+    );
+}
+
+function startSpriteAnimation(mode) {
+    const spriteType = mode === 'speaking' ? 'speaking' : 'listening';
+    if (currentSprite === spriteType && animationInterval) return; // Already running this sprite
+    stopSpriteAnimation(); // Stop any previous animation
+    currentSprite = spriteType;
+    spriteFrame = 0;
     const canvas = document.getElementById('sprite-canvas');
     const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.src = 'static/assets/animation_grid.png';
-
-    let frame = 0;
-    img.onload = () => {
-        setInterval(() => {
-            const col = frame % GRID_COLS;
-            const row = Math.floor(frame / GRID_COLS);
-            ctx.clearRect(0, 0, SPRITE_SIZE, SPRITE_SIZE);
-            ctx.drawImage(
-                img,
-                col * SPRITE_SIZE, row * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE,
-                0, 0, SPRITE_SIZE, SPRITE_SIZE
-            );
-            frame = (frame + 1) % FRAME_COUNT;
+    spriteImg = new Image();
+    spriteImg.src = SPRITE_PATHS[spriteType];
+    spriteImg.onload = () => {
+        animationInterval = setInterval(() => {
+            drawSpriteFrame(ctx, spriteImg, spriteFrame);
+            spriteFrame = (spriteFrame + 1) % FRAME_COUNT;
         }, 1000 / FRAME_RATE);
     };
 }
 
-// Start the animation when the page loads
-document.addEventListener('DOMContentLoaded', startSpriteAnimation);
+function stopSpriteAnimation() {
+    if (animationInterval) {
+        clearInterval(animationInterval);
+        animationInterval = null;
+    }
+    // Optionally clear the canvas or leave the last frame visible
+}
 
-// --- src/app.js ---
 import { Conversation } from '@11labs/client';
 
 let conversation = null;
@@ -106,15 +127,21 @@ async function startConversation() {
                 updateStatus(false);
                 startButton.disabled = false;
                 endButton.disabled = true;
-                updateSpeakingStatus({ mode: 'listening' }); // Reset to listening mode on disconnect
+                updateSpeakingStatus({ mode: 'listening' });
+                stopSpriteAnimation();
             },
             onError: (error) => {
                 console.error('Conversation error:', error);
                 alert('An error occurred during the conversation.');
             },
             onModeChange: (mode) => {
-                console.log('Mode changed:', mode); // Debug log to see exact mode object
+                console.log('Mode changed:', mode);
                 updateSpeakingStatus(mode);
+                if (mode.mode === 'speaking') {
+                    startSpriteAnimation('speaking');
+                } else {
+                    startSpriteAnimation('listening');
+                }
             }
         });
     } catch (error) {
@@ -127,6 +154,7 @@ async function endConversation() {
     if (conversation) {
         await conversation.endSession();
         conversation = null;
+        stopSpriteAnimation();
     }
 }
 
