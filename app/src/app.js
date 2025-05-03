@@ -66,22 +66,15 @@ async function requestMicrophonePermission() {
     }
 }
 
-async function getSignedUrl() {
-    try {
-        const response = await fetch('/api/signed-url');
-        if (!response.ok) throw new Error('Failed to get signed URL');
-        const data = await response.json();
-        return data.signedUrl;
-    } catch (error) {
-        console.error('Error getting signed URL:', error);
-        throw error;
-    }
+function getAgentIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('agentId') || 'xj5vNrQBEgYg7GhB8jGy'; // default agent
 }
 
-async function getAgentId() {
-    const response = await fetch('/api/getAgentId');
-    const { agentId } = await response.json();
-    return agentId;
+async function getSignedUrl(agentId) {
+    const response = await fetch('/api/signed-url?agentId=' + encodeURIComponent(agentId));
+    const data = await response.json();
+    return data.signedUrl;
 }
 
 function updateStatus(isConnected) {
@@ -109,13 +102,11 @@ async function startConversation() {
             alert('Microphone permission is required for the conversation.');
             return;
         }
-
-        const signedUrl = await getSignedUrl();
-        //const agentId = await getAgentId(); // You can switch to agentID for public agents
+        const agentId = getAgentIdFromUrl();
+        const signedUrl = await getSignedUrl(agentId);
         
         conversation = await Conversation.startSession({
             signedUrl: signedUrl,
-            //agentId: agentId, // You can switch to agentID for public agents
             onConnect: () => {
                 console.log('Connected');
                 updateStatus(true);

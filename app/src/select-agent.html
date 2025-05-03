@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Your Negotiation Coach</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .agent-select-container {
+            max-width: 420px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 32px 28px 28px 28px;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(60, 60, 120, 0.12), 0 1.5px 6px rgba(60, 60, 120, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .agent-select-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .agent-select-btn {
+            width: 100%;
+            padding: 18px 0;
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #38d39f 0%, #38a4d3 100%);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 4px rgba(60, 60, 120, 0.07);
+        }
+        .agent-select-btn:nth-child(4) {
+            background: linear-gradient(90deg, #ff6b6b 0%, #ffb86b 100%);
+        }
+        .agent-select-btn:nth-child(5) {
+            background: linear-gradient(90deg, #a18cd1 0%, #fbc2eb 100%);
+        }
+        .agent-select-btn:nth-child(6) {
+            background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="agent-select-container">
+        <div class="agent-select-title">
+            Ayy, I'm Kirk Kinnell, your negotiation coach.<br>
+            What do you wanna learn today?
+        </div>
+        <button class="agent-select-btn" onclick="selectAgent('xj5vNrQBEgYg7GhB8jGy')">
+            Help with my negotiation
+        </button>
+        <button class="agent-select-btn" onclick="selectAgent('8SbVUljmwSzSR3H2dlTY')">
+            Education: Reframing Techniques
+        </button>
+        <button class="agent-select-btn" onclick="selectAgent('bi8WfZlR4v6OhVTCaSu0')">
+            Education: Negotiation Psychology
+        </button>
+        <button class="agent-select-btn" onclick="selectAgent('KKkQxaLYaDDTw5S4mefn')">
+            Conflict Simulator: Your Salary Negotiations
+        </button>
+        <button class="agent-select-btn" onclick="selectAgent('RUfiwSSjaQVCgU1rn6xE')">
+            Conflict Simulator: Law Enforcement at a Night Club
+        </button>
+    </div>
+    <script>
+        function selectAgent(agentId) {
+            window.location.href = 'index.html?agentId=' + encodeURIComponent(agentId);
+        }
+    </script>
+</body>
+</html> 
