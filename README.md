@@ -121,8 +121,4 @@ The server will run on [http://localhost:3000](http://localhost:3000).
 
 ## License
 
-MIT (or your preferred license)
-
----
-
-Let us know if you want to add more details, usage screenshots, or deployment instructions!
+MIT
